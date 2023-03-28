@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+ <title>MBTI 名人录</title>
+</head>
+
+<body>
+  <h1>MBTI 名人录</h1>
+  <!--
+      这个区域将用于显示名人列表及其MBTI类型
+   -->
+  <table>
+    <tr>
+      <th>人名</th>
+      <th>MBTI人格</th>
+    </tr>
+    <td>徐志摩</td>
+    <td>INFP</td>
+    </tr>
+  </table>
+  <br/>
+
+  <!--
+      此部分包含表单，将用于点击我们将在下一节中构建的 `POST /items` API
+   -->
+  <form action="/items" method="post">
+    人名:
+    <input type="text" name="name">
+    <br/> MBTI人格:
+    <input type="text" name="mbti">
+    <br/>
+    <input type="submit" value="提交">
+  </form>
+
+  <!--
+    最后，是在每次页面加载时运行的脚本，以获取名人MBTI列表并将它们添加到我们现有的 table 表中
+   -->
+  <script>
+    celebritiesTable = document.querySelector("table")
+
+    /*
+    使用浏览器的 `fetch` API 对 /items 进行 GET 调用
+    我们希望响应是 MBTI 名人录的 JSON 列表，格式如下：
+    [
+      {"name":"...","mbti":"..."},
+      {"name":"...","mbti":"..."}
+    ]
+    */
+    fetch("/items")
+      .then(response => response.json())
+      .then(items => {
+        // 一旦我们获取了列表，我们就遍历它
+        items.forEach(item => {
+          // 创建表行
+          row = document.createElement("tr")
+
+          // 为人名和 MBTI 人格类型列创建表数据元素
+          nameTd = document.createElement("td")
+          nameTd.innerHTML = item.name
+          mbtiTd = document.createElement("td")
+          mbtiTd.innerHTML = item.mbti
+
+          // 将数据元素添加到行中
+          row.appendChild(nameTd)
+          row.appendChild(mbtiTd)
+          // 最后，将行元素添加到 table 中
+          celebritiesTable.appendChild(row)
+        })
+      })
+  </script>
+</body>
